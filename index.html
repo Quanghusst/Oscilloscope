@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô phỏng Oscilloscope</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>MÔ PHỎNG OSCILLOSCOPE</h1>
+
+    <p style="font-style: italic; color: gray;">
+        * Biểu đồ mô phỏng hàm sóng: <strong>y = Asin(2𝝿ft + φ)</strong>
+        
+    <div class="input-controls">
+        <div>
+            <label for="fInput">Tần số f (Hz):</label>
+            <input type="number" id="fInput" value="1" step="any" readonly> </div>
+         <div>
+            <label for="aInput">Biên độ A:</label>
+            <input type="number" id="aInput" value="1" step="any" readonly> </div>
+         <div>
+            <label for="phiInput">Pha đầu φ (độ):</label>
+            <input type="number" id="phiInput" value="150" step="any"> </div>
+        <div>
+            <label for="tqtFactorInput">Hệ số Tqt (Tqt = ? * Ty):</label>
+            <input type="number" id="tqtFactorInput" value="1" step="any" min="0">
+        </div>
+        <div>
+            <label for="tqnFactorInput">Hệ số Tqn (Tqn = ? * Ty):</label>
+            <input type="number" id="tqnFactorInput" value="0.5" step="any" min="0">
+        </div>
+        <button id="updateButton">Cập nhật Biểu đồ</button>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="oscilloscopeChart"></canvas>
+    </div>
+
+    <div id="parameters">
+        <h2>Thông số Tính toán</h2>
+        <pre id="calc-info"></pre>
+    </div>
+    <p  style="font-style: italic; color: gray;">&copy; 2025 by ledangquangdangquang<a href="https://www.facebook.com/ten.fb.cua.ban" target="_blank"></a></p>
+
+    <script src="script.js"></script>
+</body>
+</html>
