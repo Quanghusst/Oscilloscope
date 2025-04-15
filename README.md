@@ -1,4 +1,4 @@
-****# Mô phỏng Oscilloscope trên nền Web
+# Mô phỏng Oscilloscope trên nền Web
 
 Đây là một dự án mô phỏng cách tín hiệu hình sin được hiển thị trên màn hình của một máy hiện sóng (oscilloscope) sử dụng cơ chế quét răng cưa (sawtooth sweep). Dự án này được chuyển đổi từ mã nguồn MATLAB gốc sang HTML, CSS và JavaScript, sử dụng thư viện Chart.js để vẽ đồ thị.
 
