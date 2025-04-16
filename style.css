@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Quicksand:wght@400;600&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600&family=Rajdhani:wght@600&display=swap');
 * {
     box-sizing: border-box;
     margin: 0;
@@ -7,7 +6,7 @@
 }
 
 body {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     background: #1f1f2e;
     color: #ddd;
     padding: 2rem;
@@ -16,11 +15,12 @@ body {
 }
 
 h1 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     text-align: center;
     font-size: 3rem;
     margin-bottom: 1rem;
     background: linear-gradient(90deg, #8f94fb, #4e54c8);
+    background-clip: text; /* Thêm dòng này */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 10px rgba(142, 148, 255, 0.5);
