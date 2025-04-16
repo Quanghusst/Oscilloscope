@@ -1,95 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Quicksand:wght@400;600&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    font-family: sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #f4f4f4;
+    font-family: 'Quicksand', sans-serif;
+    background: #1f1f2e;
+    color: #ddd;
+    padding: 2rem;
+    min-height: 100vh;
+    line-height: 1.6;
 }
 
-h1, h2 {
-    color: #333;
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #8f94fb, #4e54c8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(142, 148, 255, 0.5);
 }
 
-/* --- Style cho khu vực nhập liệu --- */
+p {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #aaa;
+}
+
 .input-controls {
-    display: flex;
-    flex-wrap: wrap; /* Cho phép xuống dòng nếu không đủ chỗ */
-    gap: 15px; /* Khoảng cách giữa các phần tử */
-    align-items: center; /* Căn giữa các mục theo chiều dọc */
-    background-color: #e9e9e9;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    width: 80%;
-    max-width: 800px;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-}
-
-.input-controls div {
-    display: flex;
-    align-items: center; /* Căn label và input thẳng hàng */
-    gap: 5px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    margin-bottom: 2rem;
 }
 
 .input-controls label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: #b0b8ff;
+}
+
+.input-controls input {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
+    border: 1px solid #555;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #eee;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-controls input:focus {
+    border-color: #8f94fb;
+    box-shadow: 0 0 6px rgba(143, 148, 251, 0.6);
+    outline: none;
+}
+
+button#updateButton {
+    grid-column: span 2;
+    padding: 0.8rem;
+    font-size: 1rem;
     font-weight: bold;
-    font-size: 0.9em;
-}
-
-.input-controls input[type="number"] {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    width: 80px; /* Độ rộng ô nhập liệu */
-}
-/* Làm ô readonly có nền khác biệt */
-.input-controls input[readonly] {
-    background-color: #ddd;
-    cursor: not-allowed;
-}
-
-
-.input-controls button {
-    padding: 8px 15px;
-    background-color: #36A2EB;
-    color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.7rem;
+    background: linear-gradient(135deg, #8f94fb, #4e54c8);
+    color: white;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-    margin-left: auto; /* Đẩy nút sang phải nếu đủ chỗ */
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 5px 15px rgba(143, 148, 251, 0.3);
 }
 
-.input-controls button:hover {
-    background-color: #258cd1;
-}
-/* --- Kết thúc style nhập liệu --- */
-
-
-.chart-container {
-    position: relative;
-    width: 80%;
-    max-width: 800px;
-    height: 400px;
-    margin-bottom: 30px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+button#updateButton:hover {
+    background: linear-gradient(135deg, #9ba2fd, #5b60d1);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(143, 148, 251, 0.4);
 }
 
+.main-content {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+/* Tham số bên trái */
 #parameters {
-    width: 80%;
-    max-width: 800px;
-    background-color: #eee;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+    flex: 1;
+    min-width: 280px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.2rem;
+    border-radius: 1rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    color: #ccc;
+    backdrop-filter: blur(10px);
 }
 
-#calc-info {
-    font-family: monospace;
-    font-size: 1em;
+#parameters h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    color: #8f94fb;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid #8f94fb;
+    padding-bottom: 0.3rem;
+}
+
+pre#calc-info {
     white-space: pre-wrap;
-    word-wrap: break-word;
+    font-family: 'Courier New', monospace;
+    color: #eee;
+}
+
+/* Biểu đồ bên phải */
+.chart-container {
+    flex: 2;
+    min-width: 300px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+canvas {
+    width: 100% !important;
+    height: auto !important;
+}
+
+footer, p:last-of-type {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+a {
+    color: #9fa4ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
