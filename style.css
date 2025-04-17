@@ -12,6 +12,7 @@ body {
     padding: 2rem;
     min-height: 100vh;
     line-height: 1.6;
+    overflow: hidden; /* Ngăn cuộn trang */
 }
 
 h1 {
