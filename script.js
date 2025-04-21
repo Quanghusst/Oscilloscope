@@ -87,12 +87,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const t_qt = linspace(0, Tqt, numPoints);
-        const t_qn = linspace(Tqn, 0, numPoints);
+        const t_qn = linspace(0, Tqn, numPoints);
+        // const t_qn = linspace(Tqn, 0, numPoints);
 
         const datasets = [];
 
         for (let i = 0; i < m_iterations; i++) {
-            const tOffset = i * Tqn;
+            const tOffset = i * T_sweep;
             const yqt = t_qt.map(t => A * Math.sin(2 * Math.PI * f * (t + tOffset) + phi));
             const yqn = t_qn.map(t => A * Math.sin(2 * Math.PI * f * (t + tOffset) + phi));
 
