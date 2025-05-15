@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     const getById = id => document.getElementById(id);
     const fInput = getById('fInput');
@@ -8,8 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateButton = getById('updateButton');
     const calcInfoElement = getById('calc-info');
     const ctx = getById('oscilloscopeChart').getContext('2d');
+    const inputCtx = document.getElementById('inputSignalChart').getContext('2d');
+    const sweepCtx = document.getElementById('sweepSignalChart').getContext('2d');
 
     let oscilloscopeChart = null;
+    let inputSignalChart = null;
+    let sweepSignalChart = null;
     const numPoints = 200;
     const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
@@ -86,17 +91,102 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Vẽ x(t)
+        const t_xt = linspace(0, T_sweep, numPoints);
+        const x_xt = t_xt.map(t => (t <= Tqt) ? t / Tqt : 1 - (t - Tqt) / Tqn);
+        // const x_xt = t_xt.map(t => t / Tqt );
+
+        const sweepData = {
+            labels: t_xt,
+            datasets: [{
+                label: "x(t) – tín hiệu quét răng cưa",
+                data: t_xt.map((t, i) => ({ x: t, y: x_xt[i] })),
+                borderColor: '#FF9F40',
+                fill: false,
+                tension: 0.1,
+                pointRadius: 0
+            }]
+        };
+
+        const sweepOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: { display: true, text: 'Tín hiệu quét x(t)' },
+                legend: { display: false }
+            },
+            scales: {
+                // x: { title: { display: true, text: 'Thời gian (s)' } },
+            x: {
+                type: 'linear',
+                title: { display: true, text: 'Thời gian (s)' },
+                min: 0,
+                max: T_sweep // cố định trục t từ 0 đến T_sweep
+            },
+                y: { title: { display: true, text: 'Biên độ' }, min: 0, max: 1.2 }
+            },
+            animation: { duration: 0 }
+        };
+
+        if (sweepSignalChart) sweepSignalChart.destroy();
+        sweepSignalChart = new Chart(sweepCtx, {
+            type: 'line',
+            data: sweepData,
+            options: sweepOptions
+        });
+
+        // Vẽ y(t)
+        const t_input = linspace(0, T_sweep, numPoints);
+        const y_input = t_input.map(t => A * Math.sin(2 * Math.PI * f * t + phi));
+
+        const inputSignalData = {
+            labels: t_input,
+            datasets: [{
+                label: "y(t) = A·sin(2π·f·t + φ)",
+                data: t_input.map((x, i) => ({ x, y: y_input[i] })),
+                borderColor: '#4BC0C0',
+                fill: false,
+                tension: 0.1,
+                pointRadius: 0
+            }]
+        };
+
+        const inputOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: { display: true, text: 'Tín hiệu đầu vào y(t)' },
+                legend: { display: false }
+            },
+            scales: {
+                // x: { type: 'linear', title: { display: true, text: 'Thời gian (s)' } },
+            x: {
+                type: 'linear',
+                title: { display: true, text: 'Thời gian (s)' },
+                min: 0,
+                max: T_sweep // cố định trục t từ 0 đến T_sweep
+            },
+                y: { title: { display: true, text: 'Biên độ' }, min: -A * 1.1, max: A * 1.1 }
+            },
+            animation: { duration: 0 }
+        };
+
+        if (inputSignalChart) inputSignalChart.destroy();
+        inputSignalChart = new Chart(inputCtx, {
+            type: 'line',
+            data: inputSignalData,
+            options: inputOptions
+        });
+
+        // Vẽ oscilloscope
         const t_qt = linspace(0, Tqt, numPoints);
         const t_qn = linspace(0, Tqn, numPoints);
-        // const t_qn = linspace(Tqn, 0, numPoints);
-
         const datasets = [];
 
         for (let i = 0; i < m_iterations; i++) {
             const tOffset = i * T_sweep;
             const yqt = t_qt.map(t => A * Math.sin(2 * Math.PI * f * (t + tOffset) + phi));
             const yqn = t_qn.map(t => A * Math.sin(2 * Math.PI * f * (t + tOffset) + phi));
-
             const color = colors[i % colors.length];
 
             datasets.push({
@@ -112,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (Tqn > 0) {
                 datasets.push({
                     label: `Tqn ${i + 1}`,
-                    data: t_qt.map((x, idx) => ({ x, y: yqn[idx] })), // giữ cùng trục x
+                    data: t_qt.map((x, idx) => ({ x, y: yqn[idx] })),
                     borderColor: color,
                     borderDash: [5, 5],
                     borderWidth: 1,
@@ -124,9 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const chartData = { datasets };
-        const yAxisMin = -A * 1.1;
-        const yAxisMax = A * 1.1;
-
         const chartOptions = {
             responsive: true,
             maintainAspectRatio: false,
@@ -144,20 +231,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 y: {
                     title: { display: true, text: 'Biên độ' },
-                    min: yAxisMin,
-                    max: yAxisMax
+                    min: -A * 1.1,
+                    max: A * 1.1
                 }
             },
             animation: { duration: 0 }
         };
 
-        if (oscilloscopeChart) {
-            oscilloscopeChart.data = chartData;
-            Object.assign(oscilloscopeChart.options.scales, chartOptions.scales);
-            oscilloscopeChart.update();
-        } else {
-            oscilloscopeChart = new Chart(ctx, { type: 'line', data: chartData, options: chartOptions });
-        }
+        if (oscilloscopeChart) oscilloscopeChart.destroy();
+        oscilloscopeChart = new Chart(ctx, { type: 'line', data: chartData, options: chartOptions });
 
         // Hiển thị thông tin
         calcInfoElement.textContent = `--- Thông số đầu vào ---
@@ -178,5 +260,5 @@ Phân số tối giản n/m = ${n_sync} / ${m_iterations}
     }
 
     updateButton.addEventListener('click', updateChart);
-    updateChart(); // lần đầu khi tải trang
+    updateChart();
 });
