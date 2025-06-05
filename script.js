@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const getById = id => document.getElementById(id);
     const fInput = getById('fInput');
@@ -10,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const calcInfoElement = getById('calc-info');
     const ctx = getById('oscilloscopeChart').getContext('2d');
     const inputCtx = document.getElementById('inputSignalChart').getContext('2d');
-    const sweepCtx = document.getElementById('sweepSignalChart').getContext('2d');
-
+    const sweepCtx = document.getElementById('sweepSignalChart').getContext('2d'); 
+    const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
     let oscilloscopeChart = null;
     let inputSignalChart = null;
     let sweepSignalChart = null;
@@ -178,39 +177,54 @@ document.addEventListener('DOMContentLoaded', () => {
             options: inputOptions
         });
 
-        // Vẽ oscilloscope
-        const t_qt = linspace(0, Tqt, numPoints);
-        const t_qn = linspace(0, Tqn, numPoints);
-        const datasets = [];
+        // === VẼ OSCILLOSCOPE THEO x(t) và y(t) ===
+        // Hàm LCM (bội chung nhỏ nhất)
+        const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
 
-        for (let i = 0; i < m_iterations; i++) {
-            const tOffset = i * T_sweep;
-            const yqt = t_qt.map(t => A * Math.sin(2 * Math.PI * f * (t + tOffset) + phi));
-            const yqn = t_qn.map(t => A * Math.sin(2 * Math.PI * f * (t + tOffset) + phi));
-            const color = colors[i % colors.length];
+        const Ty_ms = Math.round(Ty * 1000);
+        const Tpair_ms = Math.round((Tqt + Tqn) * 1000);
+        const lcm_ms = lcm(Ty_ms, Tpair_ms);
+        const T_total = lcm_ms / 1000;
+        const n_cycles = Math.round(T_total / (Tqt + Tqn));
+
+        const datasets = [];
+        let t_offset = 0;
+
+        for (let i = 0; i < n_cycles; i++) {
+            // Quay thuận
+            const t_qt = linspace(0, Tqt, numPoints);
+            const x_qt = t_qt.map(t => t / Tqt);
+            const y_qt = t_qt.map(t => A * Math.sin(2 * Math.PI * f * (t + t_offset) + phi));
 
             datasets.push({
-                label: `Tqt ${i + 1}`,
-                data: t_qt.map((x, idx) => ({ x, y: yqt[idx] })),
-                borderColor: color,
+                label: `Quay thuận ${i + 1}`,
+                data: x_qt.map((x, idx) => ({ x, y: y_qt[idx] })),
+                borderColor: colors[i % colors.length],
                 borderWidth: 1.5,
                 fill: false,
-                tension: 0.1,
+                tension: 0.2,
                 pointRadius: 0
             });
 
-            if (Tqn > 0) {
-                datasets.push({
-                    label: `Tqn ${i + 1}`,
-                    data: t_qt.map((x, idx) => ({ x, y: yqn[idx] })),
-                    borderColor: color,
-                    borderDash: [5, 5],
-                    borderWidth: 1,
-                    fill: false,
-                    tension: 0.1,
-                    pointRadius: 0
-                });
-            }
+            t_offset += Tqt;
+
+            // Quay nghịch
+            const t_qn = linspace(0, Tqn, numPoints);
+            const x_qn = t_qn.map(t => 1 - t / Tqn);
+            const y_qn = t_qn.map(t => A * Math.sin(2 * Math.PI * f * (t + t_offset) + phi));
+
+            datasets.push({
+                label: `Quay nghịch ${i + 1}`,
+                data: x_qn.map((x, idx) => ({ x, y: y_qn[idx] })),
+                borderColor: colors[i % colors.length],
+                borderDash: [5, 5],
+                borderWidth: 1,
+                fill: false,
+                tension: 0.2,
+                pointRadius: 0
+            });
+
+            t_offset += Tqn;
         }
 
         const chartData = { datasets };
@@ -218,28 +232,32 @@ document.addEventListener('DOMContentLoaded', () => {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                title: { display: true, text: 'MÀN HÌNH OSCILLOSCOPE (JS/Chart.js)' },
+                title: { display: true, text: 'MÀN HÌNH OSCILLOSCOPE (x(t) vs y(t))' },
                 legend: { position: 'top' },
                 tooltip: { mode: 'index', intersect: false }
             },
             scales: {
                 x: {
                     type: 'linear',
-                    title: { display: true, text: 'Thời gian (trục quét thuận)' },
-                    min: 0,
-                    max: Tqt
+                    title: { display: true, text: 'x(t) – Răng cưa' },
+                    min: -0.1,
+                    max: 1.1
                 },
                 y: {
-                    title: { display: true, text: 'Biên độ' },
-                    min: -A * 1.1,
-                    max: A * 1.1
+                    title: { display: true, text: 'y(t)' },
+                    min: -A * 1.2,
+                    max: A * 1.2
                 }
             },
             animation: { duration: 0 }
         };
 
         if (oscilloscopeChart) oscilloscopeChart.destroy();
-        oscilloscopeChart = new Chart(ctx, { type: 'line', data: chartData, options: chartOptions });
+        oscilloscopeChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions
+        });
 
         // Hiển thị thông tin
         calcInfoElement.textContent = `--- Thông số đầu vào ---
